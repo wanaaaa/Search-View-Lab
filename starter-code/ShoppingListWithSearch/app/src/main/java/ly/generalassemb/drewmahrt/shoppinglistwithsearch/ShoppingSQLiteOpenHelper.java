@@ -1,18 +1,9 @@
 package ly.generalassemb.drewmahrt.shoppinglistwithsearch;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.TextUtils;
-import android.util.Log;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 
 public class ShoppingSQLiteOpenHelper extends SQLiteOpenHelper{
@@ -39,7 +30,16 @@ public class ShoppingSQLiteOpenHelper extends SQLiteOpenHelper{
                     COL_ITEM_DESCRIPTION + " TEXT, " +
                     COL_ITEM_PRICE + " REAL, " +
                     COL_ITEM_TYPE + " TEXT )";
+////////////////////////
+    private static ShoppingSQLiteOpenHelper instance;
 
+    public static ShoppingSQLiteOpenHelper getInstance(Context context) {
+        if (instance == null) {
+            instance = new ShoppingSQLiteOpenHelper(context.getApplicationContext());
+        }
+        return instance;
+    }
+//////////////////
 
     public ShoppingSQLiteOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -56,5 +56,19 @@ public class ShoppingSQLiteOpenHelper extends SQLiteOpenHelper{
         this.onCreate(db);
     }
 
+    public Cursor searchNumbers(String query){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(SHOPPING_LIST_TABLE_NAME, // a. table
+                SHOPPING_COLUMNS, // b. column names
+                COL_ITEM_NAME+" = ?", // c. selections
+                new String[]{query}, // d. selections args
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+        return cursor;
+    }
 
 }
